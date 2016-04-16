@@ -5,4 +5,5 @@
     <dimen name="padding_list_item">16dp</dimen>
     <dimen name="text_size_primary_list_item">16sp</dimen>
     <dimen name="text_size_secondary_list_item">14sp</dimen>
+    <dimen name="size_progress_bar">40dp</dimen>
 </resources>

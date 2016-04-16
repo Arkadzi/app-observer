@@ -2,18 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="me.gumenniy.arkadiy.appobserver.fragments.AppListFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        style="@style/ListViewTheme"/>
 
     <com.github.rahatarmanahmed.cpv.CircularProgressView
         android:id="@+id/progress_bar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/size_progress_bar"
+        android:layout_height="@dimen/size_progress_bar"
         app:cpv_animAutostart="true"
         app:cpv_indeterminate="true"
         android:layout_gravity="center" />

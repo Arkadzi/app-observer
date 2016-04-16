@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AppObserver</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="startScan">Начать Сканирование</string>
+    <string name="deleted">Удалено</string>
+    <string name="newApp">Новое</string>
+    <string name="noChanges">Без изменений</string>
+</resources>

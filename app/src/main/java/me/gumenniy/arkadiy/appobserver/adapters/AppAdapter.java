@@ -39,7 +39,7 @@ public class AppAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(context);
 
         deleted = context.getString(R.string.deleted);
-        installed = context.getString(R.string.installed);
+        installed = context.getString(R.string.newApp);
         noChanges = context.getString(R.string.noChanges);
     }
 
