@@ -11,14 +11,12 @@ import android.widget.Button;
 
 import me.gumenniy.arkadiy.appobserver.R;
 import me.gumenniy.arkadiy.appobserver.presentation.presenter.ScanPresenter;
-import me.gumenniy.arkadiy.appobserver.presentation.view.BaseView;
 import me.gumenniy.arkadiy.appobserver.presentation.view.ScanView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ScanFragment extends Fragment implements ScanView {
-
     private ScanPresenter presenter;
 
     public static Fragment newInstance() {
@@ -53,14 +51,19 @@ public class ScanFragment extends Fragment implements ScanView {
                 presenter.handleClick();
             }
         });
-        presenter.bindView(this);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        presenter.bindView(this);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        presenter.bindView(null);
+        presenter.unbindView(isRemoving());
     }
 
     @Override

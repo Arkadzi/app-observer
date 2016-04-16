@@ -1,5 +1,6 @@
 package me.gumenniy.arkadiy.appobserver.presentation.presenter;
 
+import me.gumenniy.arkadiy.appobserver.presentation.view.BaseView;
 import me.gumenniy.arkadiy.appobserver.presentation.view.ScanView;
 
 /**

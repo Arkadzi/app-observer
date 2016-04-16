@@ -1,5 +1,6 @@
 package me.gumenniy.arkadiy.appobserver.presentation.presenter;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import me.gumenniy.arkadiy.appobserver.presentation.view.BaseView;
@@ -7,17 +8,21 @@ import me.gumenniy.arkadiy.appobserver.presentation.view.BaseView;
 /**
  * Created by Arkadiy on 15.04.2016.
  */
-public abstract class BasePresenter<T extends BaseView> {
+public abstract class BasePresenter<V> {
 
     @Nullable
-    private T view;
+    private V view;
 
-    public void bindView(T view) {
+    public void bindView(@NonNull V view) {
         this.view = view;
     }
 
+    public void unbindView(boolean isViewDestroyed) {
+        this.view = null;
+    }
+
     @Nullable
-    public T getView() {
+    public V getView() {
         return view;
     }
 }

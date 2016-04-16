@@ -1,0 +1,9 @@
+apply plugin: 'application'
+apply plugin: 'java'
+
+mainClassName = "me.gumenniy.arkadiy.appobserver.dao.PackageDaoGenerator"
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'de.greenrobot:greendao-generator:2.1.0'
+    compile files('libs/freemarker-2.3.24-incubating.jar')
+}
