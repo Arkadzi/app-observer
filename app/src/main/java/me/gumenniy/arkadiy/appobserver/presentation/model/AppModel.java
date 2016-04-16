@@ -146,6 +146,11 @@ public class AppModel {
 
             appDao.insertOrReplaceInTx(newApps);
 
+            ArrayList<App> deletedApps = new ArrayList<>(oldApps);
+            deletedApps.removeAll(newApps);
+
+            appDao.deleteInTx(deletedApps);
+
             if (!isCancelled()) {
                 closeDbConnection();
             }
