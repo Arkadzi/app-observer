@@ -69,6 +69,7 @@ public class ScanFragment extends Fragment implements ScanView {
     @Override
     public void navigate() {
         getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_in, R.anim.pop_out)
                 .replace(R.id.fragment_container, AppListFragment.newInstance())
                 .addToBackStack(null)
                 .commit();

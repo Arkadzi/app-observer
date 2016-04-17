@@ -74,7 +74,7 @@ public class ListPresenter extends BasePresenter<ListView<App>> implements AppMo
         Collections.sort(allApps, new Comparator<App>() {
             @Override
             public int compare(App lhs, App rhs) {
-                return lhs.getAppPackage().compareTo(rhs.getAppPackage());
+                return lhs.getAppLabel().compareTo(rhs.getAppLabel());
             }
         });
 

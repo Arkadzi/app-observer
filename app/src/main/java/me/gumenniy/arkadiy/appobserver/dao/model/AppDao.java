@@ -24,7 +24,8 @@ public class AppDao extends AbstractDao<App, String> {
     */
     public static class Properties {
         public final static Property AppPackage = new Property(0, String.class, "appPackage", true, "APP_PACKAGE");
-        public final static Property LastScanDate = new Property(1, java.util.Date.class, "lastScanDate", false, "LAST_SCAN_DATE");
+        public final static Property AppLabel = new Property(1, String.class, "appLabel", false, "APP_LABEL");
+        public final static Property LastScanDate = new Property(2, java.util.Date.class, "lastScanDate", false, "LAST_SCAN_DATE");
     };
 
 
@@ -41,7 +42,8 @@ public class AppDao extends AbstractDao<App, String> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"APP\" (" + //
                 "\"APP_PACKAGE\" TEXT PRIMARY KEY NOT NULL UNIQUE ," + // 0: appPackage
-                "\"LAST_SCAN_DATE\" INTEGER);"); // 1: lastScanDate
+                "\"APP_LABEL\" TEXT," + // 1: appLabel
+                "\"LAST_SCAN_DATE\" INTEGER);"); // 2: lastScanDate
     }
 
     /** Drops the underlying database table. */
@@ -60,9 +62,14 @@ public class AppDao extends AbstractDao<App, String> {
             stmt.bindString(1, appPackage);
         }
  
+        String appLabel = entity.getAppLabel();
+        if (appLabel != null) {
+            stmt.bindString(2, appLabel);
+        }
+ 
         java.util.Date lastScanDate = entity.getLastScanDate();
         if (lastScanDate != null) {
-            stmt.bindLong(2, lastScanDate.getTime());
+            stmt.bindLong(3, lastScanDate.getTime());
         }
     }
 
@@ -77,7 +84,8 @@ public class AppDao extends AbstractDao<App, String> {
     public App readEntity(Cursor cursor, int offset) {
         App entity = new App( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // appPackage
-            cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)) // lastScanDate
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // appLabel
+            cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)) // lastScanDate
         );
         return entity;
     }
@@ -86,7 +94,8 @@ public class AppDao extends AbstractDao<App, String> {
     @Override
     public void readEntity(Cursor cursor, App entity, int offset) {
         entity.setAppPackage(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setLastScanDate(cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)));
+        entity.setAppLabel(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setLastScanDate(cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)));
      }
     
     /** @inheritdoc */

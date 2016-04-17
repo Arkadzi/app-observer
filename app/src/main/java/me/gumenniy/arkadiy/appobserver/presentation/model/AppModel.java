@@ -1,9 +1,10 @@
 package me.gumenniy.arkadiy.appobserver.presentation.model;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ResolveInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import de.greenrobot.dao.async.AsyncOperationListener;
 import me.gumenniy.arkadiy.appobserver.dao.model.App;
 import me.gumenniy.arkadiy.appobserver.dao.model.AppDao;
 import me.gumenniy.arkadiy.appobserver.dao.model.DaoMaster;
@@ -38,16 +38,16 @@ public class AppModel {
     @Nullable
     private AppAsyncLoader loader;
 
+    public AppModel(Context context) {
+        this.context = context;
+        helper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
+    }
+
     public static AppModel getInstance(Context context) {
         if (instance == null) {
             instance = new AppModel(context.getApplicationContext());
         }
         return instance;
-    }
-
-    public AppModel(Context context) {
-        this.context = context;
-        helper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
     }
 
     public void loadData(AppCallback callback) {
@@ -67,31 +67,58 @@ public class AppModel {
         loader = new AppAsyncLoader();
         loader.execute();
     }
+//
+//    private List<App> getInstalledComponentList() {
+//        Intent componentSearchIntent = new Intent(Intent.ACTION_MAIN, null);
+//        componentSearchIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+//        List<ResolveInfo> infoList = context.getPackageManager()
+//                .queryIntentActivities(componentSearchIntent, 0);
+//
+//        List<App> componentList = new ArrayList<>();
+//        Date date = new Date();
+//        for (ResolveInfo info : infoList) {
+//            if (info.activityInfo != null) {
+//                App app = new App(info.activityInfo.packageName, date);
+//                if (!componentList.contains(app)) {
+//                    componentList.add(app);
+//                }
+//            }
+//        }
+//        return componentList;
+//    }
 
-    private List<App> getInstalledComponentList() {
-        Intent componentSearchIntent = new Intent(Intent.ACTION_MAIN, null);
-        componentSearchIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> infoList = context.getPackageManager()
-                .queryIntentActivities(componentSearchIntent, 0);
-
-        List<App> componentList = new ArrayList<>();
+    private List<App> loadInstalledApps() {
+        PackageManager packageManager = context.getPackageManager();
+        List<ApplicationInfo> infoList = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+        List<App> apps = new ArrayList<>();
         Date date = new Date();
-        for (ResolveInfo info : infoList) {
-            if (info.activityInfo != null) {
-                App app = new App(info.activityInfo.packageName, date);
-                if (!componentList.contains(app)) {
-                    componentList.add(app);
+        for (ApplicationInfo info : infoList) {
+            try {
+                String packageName = info.packageName;
+                if (packageManager.getLaunchIntentForPackage(packageName) != null) {
+                    Drawable icon = info.loadIcon(packageManager);
+                    String label = info.loadLabel(packageManager).toString();
+
+                    App app = new App(packageName, label, date);
+                    app.setIcon(icon);
+
+                    if (!apps.contains(app)) {
+                        apps.add(app);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        return componentList;
+
+        return apps;
     }
 
     public void cancelLoad() {
         if (loader != null && !loader.isCancelled()) {
             loader.cancel(true);
             loader = null;
-            Log.e("Model"," cancelLoad");
+            Log.e("Model", " cancelLoad");
         }
     }
 
@@ -101,10 +128,6 @@ public class AppModel {
 
     public void setCallback(@Nullable AppCallback callback) {
         this.callback = callback;
-    }
-
-    public interface AppCallback {
-        void onDataLoaded(List<App> oldData, List<App> newData);
     }
 
     private void openDbConnection() {
@@ -129,13 +152,17 @@ public class AppModel {
         newData = null;
     }
 
+    public interface AppCallback {
+        void onDataLoaded(List<App> oldData, List<App> newData);
+    }
+
     private class AppAsyncLoader extends AsyncTask<Void, Void, List<List<App>>> {
 
         @Override
         protected List<List<App>> doInBackground(Void... params) {
             List<List<App>> lists = new ArrayList<>(2);
 
-            List<App> newApps = getInstalledComponentList();
+            List<App> newApps = loadInstalledApps();
 
             openDbConnection();
 
@@ -144,12 +171,12 @@ public class AppModel {
             lists.add(oldApps);
             lists.add(newApps);
 
-            appDao.insertOrReplaceInTx(newApps);
+            appDao.deleteAll();
+            appDao.insertInTx(newApps);
 
-            ArrayList<App> deletedApps = new ArrayList<>(oldApps);
-            deletedApps.removeAll(newApps);
-
-            appDao.deleteInTx(deletedApps);
+//            ArrayList<App> deletedApps = new ArrayList<>(oldApps);
+//            deletedApps.removeAll(newApps);
+//            appDao.deleteInTx(deletedApps);
 
             if (!isCancelled()) {
                 closeDbConnection();

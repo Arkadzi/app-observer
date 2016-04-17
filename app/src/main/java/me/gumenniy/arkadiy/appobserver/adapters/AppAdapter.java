@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -64,7 +65,9 @@ public class AppAdapter extends BaseAdapter {
         ViewHolder holder = (ViewHolder) view.getTag();
 
         App item = getItem(position);
-        holder.mainTextView.setText(item.getAppPackage());
+        holder.packageTextView.setText(item.getAppPackage());
+        holder.labelTextView.setText(item.getAppLabel());
+        holder.icon.setImageDrawable(item.getIcon());
         if (deletedApps.contains(item)) {
             holder.subTextView.setText(deleted);
         } else if (newApps.contains(item)) {
@@ -72,7 +75,6 @@ public class AppAdapter extends BaseAdapter {
         } else {
             holder.subTextView.setText(noChanges);
         }
-
 
         return view;
     }
@@ -106,13 +108,17 @@ public class AppAdapter extends BaseAdapter {
 
     static class ViewHolder {
         private final View view;
-        private final TextView mainTextView;
+        private final TextView labelTextView;
         private final TextView subTextView;
+        private final TextView packageTextView;
+        private final ImageView icon;
 
         public ViewHolder(View view) {
             this.view = view;
-            mainTextView = (TextView) view.findViewById(R.id.main_text);
+            labelTextView = (TextView) view.findViewById(R.id.label_text);
             subTextView = (TextView) view.findViewById(R.id.sub_text);
+            packageTextView = (TextView) view.findViewById(R.id.package_name_text);
+            icon = (ImageView) view.findViewById(R.id.app_icon_view);
         }
     }
 }
