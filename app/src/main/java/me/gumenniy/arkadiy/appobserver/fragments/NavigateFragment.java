@@ -10,17 +10,29 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import me.gumenniy.arkadiy.appobserver.R;
-import me.gumenniy.arkadiy.appobserver.presentation.presenter.ScanPresenter;
-import me.gumenniy.arkadiy.appobserver.presentation.view.ScanView;
+import me.gumenniy.arkadiy.appobserver.presentation.presenter.NavigatePresenter;
+import me.gumenniy.arkadiy.appobserver.presentation.view.NavigateView;
 
 /**
- * A simple {@link Fragment} subclass.
+ * fragment which contains single button to launch another fragment
  */
-public class ScanFragment extends Fragment implements ScanView {
-    private ScanPresenter presenter;
+public class NavigateFragment extends Fragment implements NavigateView {
+    /**
+     * MVP presenter for this fragment
+     */
+    private NavigatePresenter presenter;
 
+    public NavigateFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * instantiates new {@link NavigateFragment} instance with non-null arguments
+     *
+     * @return instantiated fragment
+     */
     public static Fragment newInstance() {
-        Fragment fragment = new ScanFragment();
+        Fragment fragment = new NavigateFragment();
 
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -28,16 +40,26 @@ public class ScanFragment extends Fragment implements ScanView {
         return fragment;
     }
 
-    public ScanFragment() {
-        // Required empty public constructor
-    }
-
+    /**
+     * creates presenter for this fragment
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new ScanPresenter();
+        presenter = new NavigatePresenter();
     }
 
+    /**
+     * inflates view to display, binds vies to fields,
+     * sets {@link android.view.View.OnClickListener} for button
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,18 +76,30 @@ public class ScanFragment extends Fragment implements ScanView {
         return view;
     }
 
+    /**
+     * binds fragment to presenter
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         presenter.bindView(this);
     }
 
+    /**
+     * unbinds fragment from presenter
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         presenter.unbindView(isRemoving());
     }
 
+    /**
+     * replaces current fragment with instantiated {@link AppListFragment}
+     */
     @Override
     public void navigate() {
         getFragmentManager().beginTransaction()

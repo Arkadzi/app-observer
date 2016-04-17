@@ -16,22 +16,45 @@ import me.gumenniy.arkadiy.appobserver.R;
 import me.gumenniy.arkadiy.appobserver.dao.model.App;
 
 /**
- * Created by Arkadiy on 16.04.2016.
+ * Adapter for {@link android.widget.ListView}
+ * <p/>
+ * renders applications' labels, package names and icons if such presented (for non-deleted apps)
  */
 public class AppAdapter extends BaseAdapter {
 
     @NonNull
     private final LayoutInflater inflater;
+    /**
+     * label, which presents deleted applications
+     */
     private final String deleted;
+    /**
+     * label, which presents new installed applications
+     */
     private final String installed;
+    /**
+     * label, which presents applications with no changes
+     */
     private final String noChanges;
+    /**
+     * displaying applications
+     */
     @NonNull
     private List<App> apps;
+    /**
+     * deleted applications
+     */
     @NonNull
     private List<App> deletedApps;
+    /**
+     * new installed applications
+     */
     @NonNull
     private List<App> newApps;
 
+    /**
+     * @param context used for creating {@link LayoutInflater} instance
+     */
     public AppAdapter(Context context) {
         this.apps = new ArrayList<>();
         this.deletedApps = new ArrayList<>();
@@ -79,6 +102,13 @@ public class AppAdapter extends BaseAdapter {
         return view;
     }
 
+    /**
+     * inflates new viewfor list item if necessary
+     *
+     * @param convertView may contain inflated view, which could be reused
+     * @param parent      parent view for list item
+     * @return view for list item
+     */
     private View getView(View convertView, ViewGroup parent) {
         View result = convertView;
 
@@ -91,6 +121,13 @@ public class AppAdapter extends BaseAdapter {
         return result;
     }
 
+    /**
+     * overwrites and renders updated data
+     *
+     * @param deletedApps apps which where deleted since the last scan
+     * @param newApps     apps which where installed since the last scan
+     * @param apps        all apps, including {@param deletedApps}
+     */
     public void setData(@NonNull List<App> deletedApps,
                         @NonNull List<App> newApps, @NonNull List<App> apps) {
         updateList(this.apps, apps);
@@ -106,6 +143,10 @@ public class AppAdapter extends BaseAdapter {
         oldList.addAll(newList);
     }
 
+    /**
+     * stores references on views inside single list item
+     * used for decreasing time consuming during searching for views by their ids
+     */
     static class ViewHolder {
         private final View view;
         private final TextView labelTextView;
